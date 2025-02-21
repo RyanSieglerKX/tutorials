@@ -1,0 +1,258 @@
+<h1 id="ingesting-and-processing-live-data-feeds">Ingesting and Processing Live Data Feeds</h1>
+<p>Welcome to this example, where we&#39;ll explore how to handle live data feeds in kdb+ by setting up a simple streaming workflow.</p>
+<p>One of the strengths of kdb+ is its ability to process real-time data efficiently, making it ideal for use cases such as financial market data, IoT sensor streams, and telemetry data. This example will walk you through the basics of setting up a client-server architecture for ingesting and processing live data feeds in-memory.</p>
+<p>By the end of this example, you’ll understand how to establish a real-time data pipeline in kdb+, append incoming data to a table dynamically, and simulate a continuous data stream.</p>
+<p>Here, we&#39;ll cover:</p>
+<ul>
+<li>Setting up a server process to receive incoming data</li>
+<li>Establishing a client process to simulate live data streaming</li>
+<li>Using IPC (Interprocess Communication) for client-server communication</li>
+<li>Append incoming data dynamically</li>
+</ul>
+<!-- Load Clipboard.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js"></script>
+
+<!-- Custom styling -->
+<style>
+  .code-container {
+    position: relative;
+    background-color: #e0e0e0;
+    border: 1px solid #bbb;
+  }
+  .code-container code {
+    font-size: 12px;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 5px;
+  }
+  .copy-btn:hover {
+    background: #0056b3;
+  }
+  .language-q {
+     font-size: 20px;
+     color: black;
+  }
+  .process-a {
+    background-color: #d0e6ff; /* Light blue */
+    border-color: #7aa6d6;
+  }
+  .process-a .code-header {
+    background-color: #b0d0ff;
+    color: #003366;
+  }
+  .process-b {
+    background-color: #ffe5b4; /* Light orange */
+    border-color: #d6a67a;
+  }
+  .process-b .code-header {
+    background-color: #ffcc80;
+    color: #663300;
+  }
+</style>
+
+<script>
+  var clipboard = new ClipboardJS('.copy-btn');
+  clipboard.on('success', function(e) {
+    e.trigger.textContent = 'Copied!';
+    setTimeout(() => (e.trigger.textContent = 'Copy Code'), 1500);
+    e.clearSelection();
+  });
+</script>
+
+<h2 id="1-install-kdb">1. Prerequisites</h2>
+<ol>
+  <li>For setup instructions and prerequisites, please refer to the <a href="README.md">README</a>.</li>
+  <li>To run the code in this example you will need to launch 2 q terminals.
+      <ul>
+          <li>If you are using the KX Academy sandbox, you can simply open a Terminal from the Launcher window and type <code>q</code>.</li>
+          <li>If you are running kdb+ locally, you can simply open a Terminal by and typing <code>q</code>.</li>
+        </ul>
+  </li>
+</ol>
+
+<img src="images/terminals.png" alt="Render of the example setup" />
+
+<h2 id="2-setup-the-server">2. Setup the Server</h2>
+<p>A server in kdb+ is simply a process that listens for incoming data from other processes. This is useful in real-world scenarios where multiple sources (e.g., market data providers, sensors, trading engines) send real-time data to a centralized system.</p>
+<p>First, let&#39;s setup a server process that listens for incoming data and stores it in an in-memory table. Run the following command in a terminal to launch a process specifying the port 1234 with <code>-p</code>.</p>
+
+<div class="code-container process-a">
+  <div class="code-header">Server </div>
+  <button class="copy-btn" data-clipboard-target="#code-block2">Copy Code</button>
+  <pre><code class="language-q" id="code-block2"> q -p 1234</code></pre>
+</div>
+
+<p>By setting a port we have exposed this process so other clients can send data to it, the serve is now listening for incoming connections on port 1234.</p>
+<p>Next, we can create an empty in-memory table named <code>t</code>, which will store our real-time data.</p>
+<div class="code-container process-a">
+  <div class="code-header">Server</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">t:([]time:`timestamp$();sym:`$();price:`float$();size:`long$())</code></pre>
+</div>
+
+<p>Here&#39;s a breakdown of what&#39;s happening:</p>
+<ul>
+<li>We define a new table with table notation <code>([] col1:&lt;values&gt;; col2:&lt;values&gt;: ....)</code> with empty values <code>()</code>:<ul>
+<li><code>time</code> → Timestamp of the trade</li>
+<li><code>sym</code> → Symbol</li>
+<li><code>price</code> → Trade price</li>
+<li><code>size</code> → Trade volume</li>
+</ul>
+</li>
+</ul>
+<p>Now the server and table are ready to receive data!</p>
+<h2 id="3-setup-the-client">3. Setup the Client</h2>
+<p>The client acts as a data source that continuously sends new trade events to the server. In real-world scenarios, this could be a market data feed, an IoT sensor, or a trading algorithm.</p>
+<p>Open a new q session (client process) and establish a connection to the server using <code>hopen</code>:</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">h:hopen 1234</code></pre>
+</div>
+
+<p>In the above:</p>
+<ul>
+<li><code><a href="https://code.kx.com/q/ref/hopen/" target="_blank">hopen</a></code> 1234 creates a connection handle (h) to communicate with the server.</li>
+<li>If the server is not running, this would return an error.</li>
+</ul>
+<p>The client is now connected to the server and ready to send data!</p>
+<h2 id="4-send-data-from-the-client">4. Send Data from the Client</h2>
+<p>In kdb+, a client can send commands to a server using IPC (<code>hopen</code>). One way to add data to a table is by upserting new records into the table stored on the server.</p>
+<p>Let&#39;s define a function <code>f</code> to generate trade data.</p>
+
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">genData:{[n] ([] time:n#.z.P; sym:n?`A`B`C; price:10+n?10f; size:50*1+n?20)}</code></pre>
+</div>
+
+</code></pre>
+<p>In the above:</p>
+<ul>
+<li><code>{[]...}</code> is the syntax of function definition where we can pass any parameter values within <code>[]</code>, in our case this is <code>n</code> number of rows to create</li>
+<li>We define a table with table notation <code>([] col1:&lt;values&gt;; col2:&lt;values&gt;: ....)</code> that matches the table schema on our server process<ul>
+<li><code>time</code> is populated with timestamps using <code>#</code> to select</li>
+<li><code>sym</code> is populated with random symbols selected from a list using <code>?</code></li>
+<li><code>price</code> and trade <code>size</code> are randomnly generated</li>
+</ul>
+</li>
+</ul>
+<p>Let&#39;s test this works by passing 2 as the parameter <code>n</code> and we see that 2 rows of data are been generated.</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">genData 2</code></pre>
+</div>
+</code></pre>
+<pre><code>time                          sym price    size
+-----------------------------------------------
+2025.02.05D14:58:49.969964340 C   15.1598  650 
+2025.02.05D14:58:49.969964340 B   14.06664 450 
+</code></pre>
+<p>Great, now we are ready to send this to our server process using the handle <code>h</code>.</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">sendData:{[n] neg[h] (upsert;`t; genData[n])}</code></pre>
+</div>
+</code></pre>
+<p>In the above:</p>
+<ul>
+<li><code>neg[h]</code> Sends the command to the server process, using <code>neg</code> to send asynchronously meaning we do not wait for the code to finish execution to proceed</li>
+<li><code>(x;y;z)</code> Round brackets and semicolon here allow us to send the message as a list where:<ul>
+<li><code>upsert</code> Appends new data to table</li>
+<li><code>t</code> Is the table name on server process to append data to</li>
+<li><code>genData[n]</code> Generates <code>n</code> rows of data</li>
+</ul>
+</li>
+</ul>
+<p>Let&#39;s run this for 5 rows of data and check the table on the server:</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">sendData 5</code></pre>
+</div>
+<div class="code-container process-a">
+  <div class="code-header">Server</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">select from t</code></pre>
+</div>
+<pre><code>time                          sym price    size
+-----------------------------------------------
+2025.02.05D15:04:05.137048916 A   12.29662 600 
+2025.02.05D15:04:05.137048916 B   16.91953 300 
+2025.02.05D15:04:05.137048916 C   14.70788 350 
+2025.02.05D15:04:05.137048916 B   16.34672 100 
+2025.02.05D15:04:05.137048916 C   19.6724  300 
+</code></pre>
+<p>We can see 5 rows of data have been send from the client to the server process!</p>
+<h2 id="5-simulate-a-continuous-data-feed">5. Simulate a Continuous Data Feed</h2>
+<p>In real-world applications, data arrives continuously rather than in batches. Instead of manually sending data, we can automate the process using a timer that simulates an incoming data feed.</p>
+<p>kdb+ provides a built-in timer function (<code>.z.ts</code>), which executes a given command at a set interval, we define this on the client process.</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">.z.ts:{sendData 5+rand 5}
+\t 1000
+</code></pre>
+</div>
+
+<p>In the above:</p>
+<ul>
+<li><code>.z.ts</code> calls <code>sendData</code>, which sends 5-9 new trades to the server</li>
+<li>Using <code>\t</code> we trigger it to run every 1000 milliseconds (1 second)</li>
+</ul>
+<p>We can run a <code>count</code> on the table <code>t</code> on our server process to see this in actiom , run it a few times to see the number increasing.</p>
+<div class="code-container process-a">
+  <div class="code-header">Server</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">count t</code></pre>
+</div>
+
+<p>You should now see a growing table of trades appearing every second.</p>
+<p>At this point, the server continuously receives new trade data just like a real-time market data feed! </p>
+<h2 id="6-cleanup">6. Cleanup</h2>
+<p>Long-running timers or open connections can cause unintended issues, such as:</p>
+<ul>
+<li>Performance slowdowns (if <code>.z.ts</code> keeps running in the background)</li>
+<li>Connection leaks (if clients don’t properly close hopen connections)</li>
+</ul>
+<p>It is good practice therefore to stop the timer on the client and close the connection when you are finished with this example:</p>
+<div class="code-container process-b">
+  <div class="code-header">Client</div>
+  <button class="copy-btn" data-clipboard-target="#code-block">Copy Code</button>
+  <pre><code class="language-q" id="code-block">\t 0
+hclose h
+</code></pre>
+</div>
+
+<ul>
+<li><code>\t 0</code> disables <code>.z.ts</code>, stopping the automatic data generation</li>
+<li><code>hclose</code> closes the connection so the client can no longer communicate with the server process.</li>
+</ul>
+<h2 id="7-beyond-the-basics-scaling-real-time-data-processing">7. Beyond the Basics: Scaling Real-Time Data Processing</h2>
+<p>The example we’ve built here is designed to demonstrate just how powerful and elegant q/kdb+ is, even in its simplest form. In real life a professional kdb+ trading system would most likely make use of tick architecture, which:</p>
+<ul>
+<li>Logs all incoming data to disk for durability.</li>
+<li>Sends updates to multiple subscribers (real-time databases, analytics engines)</li>
+<li>Manages high-frequency streams efficiently</li>
+</ul>
+<p>To learn more about real-world kdb+ architecture, check out these resources:</p>
+<ul>
+<li>Free KX Course: <a href="#https://learninghub.kx.com/courses/kdb-architecture/">kdb+ Architecture</a> – A structured introduction to how kdb+ handles real-time and historical data.</li>
+<li>GitHub: <a href="#https://github.com/KxSystems/kdb-tick">kdb-tick</a> – The official repository for tick.q, a production-grade framework for real-time data ingestion, storage, and analytics.</li>
+</ul>
+<p>This is how real-world trading systems ingest, process, and analyze billions of data points every day—and now you have the foundation to build your own! 🚀</p>
+<h2 id="conclusion-and-next-steps">Next Steps</h2>
+<p>Try <a href="Example1.html" target="_blank">Example1</a> on Time Series & Historical Query Analysis</p>
+
+

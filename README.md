@@ -19,12 +19,12 @@ By following these examples, you'll:
 - Efficient querying and filtering
 - Using time-series functions and joins in q
 
-### 2️⃣ Real-Time Ingestion & Streaming Analytics (Example2.html)
+### 2️⃣ Ingesting and Processing Live Data Feeds (Example2.html)
 📌 Format: HTML (run in q terminal)
 💡 What you’ll learn:
-- Real-time data ingestion & event processing
-- Pattern detection & responding to streaming data
-- Writing efficient real-time queries in q
+- Real-time data ingestion 
+- Simulate live data streaming
+- Using IPC for client server communication to capture real-time data
 
 ## 🏗️ Running the Examples
 ### Option 1️⃣: Use the Academy Sandbox (No Setup Required!)
@@ -36,6 +36,7 @@ The fastest way to try these examples is via the KX Academy Sandbox, where kdb+,
     git clone https://github.com/your-repo/kdb-examples.git  
     cd kdb-examples
     ```
+3. For HTML Examples ensure to select "Trust HTML" at the top.
 
 ### Option 2️⃣ : Run Locally
 1. Install kdb+, PyKX, and Jupyter Notebooks:
@@ -47,6 +48,7 @@ The fastest way to try these examples is via the KX Academy Sandbox, where kdb+,
     git clone https://github.com/your-repo/kdb-examples.git  
     cd kdb-examples
     ```
+3. For HTML Examples open in Preview or Rendered mode.
 
 ## 🤝 Join the Community!
 Got questions? Want to connect with other kdb+ developers?
