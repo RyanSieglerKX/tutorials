@@ -3,6 +3,7 @@ This repository contains step-by-step tutorials for developers who want to quick
 
 The repository is organized into two main sections:
 - kdb+: Focused on using kdb+ and the q programming language for various use cases such as time-series analysis, event processing, and more.
+- pykx: Focused on helping python developers quickly understand and experience the power of PyKX and its interactions with kdb+/q.
 - ai-libs: Focused on integrating kdb+ with AI/ML workflows, including working with embeddings, indexing, and querying.
 
 ## 🤝 Join the Community!
