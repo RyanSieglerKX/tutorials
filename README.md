@@ -10,7 +10,7 @@ git clone https://github.com/KxSystems/tutorials.git
 cd tutorials
 ```
 
-Make sure you have kdb+ installed and accessible, along with Python (for the PyKX tutorials).
+Make sure you have [kdb+](https://kx.com/products/) installed and accessible, along with Python (for the PyKX tutorials).
 
 **Note:** The ai-libs tutorials require a beta version of software. Please contact KX for access.
 
