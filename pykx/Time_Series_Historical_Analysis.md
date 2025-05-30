@@ -101,6 +101,14 @@ trade.head(10)
     2025.01.01D00:00:00.000000000 FV    52.86591 399
     2025.01.01D00:00:00.000000000 PRCT  12.54231 534
     '))
+    
+### SQL Support 
+SQL querying is supported in the latest version of PyKX, making it easier to work with familiar SQL syntax directly. SQL can be invoked by running:
+```python
+kx.q(".s.init[]")
+kx.q.sql("SELECT * FROM $1 LIMIT 10", trade)
+```
+For more information see [SQL documentation]([https://code.kx.com/insights/core/sql.html#running-sql).
 
 ## 3.  Save Data to Disk
 
