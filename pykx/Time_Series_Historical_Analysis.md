@@ -108,7 +108,7 @@ SQL querying is supported in the latest version of PyKX, making it easier to wor
 kx.q(".s.init[]")
 kx.q.sql("SELECT * FROM $1 LIMIT 10", trade)
 ```
-For more information see [SQL documentation]([https://code.kx.com/insights/core/sql.html#running-sql).
+For more information see [SQL documentation](https://code.kx.com/insights/core/sql.html#running-sql).
 
 ## 3.  Save Data to Disk
 
