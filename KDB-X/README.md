@@ -12,6 +12,8 @@ cd tutorials
 
 Make sure you have [KDB-X](https://kdb-x.kx.com/sign-in) installed.
 
+**Important!** Intel-based macOS is not supported at this time.
+
 ## 📁 Structure 
 
 - **KDB-X/**
