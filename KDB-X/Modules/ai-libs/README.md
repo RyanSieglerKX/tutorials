@@ -1,7 +1,8 @@
 # 🚀 ai-libs Tutorials
-> **Note**: This tutorial is part of a beta release of software that is not yet publicly available. Please contact KX for access.
 
 This folder contains concise, step-by-step tutorials designed to help developers quickly understand how to integrate KDB-X with AI applications.
+
+**Important!** Intel-based macOS is not supported at this time.
 
 ## 📖 Tutorials
 1️⃣ Temporal Similarity Search (TSS) on NYSE trades
