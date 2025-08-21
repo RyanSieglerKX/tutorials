@@ -29,6 +29,11 @@ This folder contains concise, step-by-step tutorials designed to help developers
 -  Discover how to combine structured (Yahoo finance feed) and unstructured (SENS announcments) data
 - Fetching Yahoo Finance ticker data using PyKX and creating embeddings with PyTorch on SENS data
 - Integrating time series analysis with TSS and nearest neighbor searches with HNSW 
+
+6️⃣ Fuzzy Filtering (coming soon!)
+
+7️⃣ DTW Getting Started
+- Discover how to use Dynamic Time Warping on financial NYSE data to identify similar patterns in price movements, even when those patterns occur at different speeds or times.
   
 ## 🤝 Got a question?
 Want to connect with other developers or get help? Join our Slack community https://kx.com/slack or ask a question on https://forum.kx.com
