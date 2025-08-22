@@ -1,4 +1,4 @@
-﻿Date,Symbol,Company Name,Close/Last,Volume,Open,High,Low
+﻿date,sym,company,close,volume,open,high,low
 04/01/2025,ADD,Color Star Technology Co Ltd,0.7249,392109,0.6733,0.73,0.635
 04/01/2025,AXON,Axon Enterprise Inc,541.2,509615,521.59,542.9849,520.19
 04/01/2025,CEG,Constellation Energy Corporation,206.94,2863111,200.95,207.76,198.09
