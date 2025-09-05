@@ -30,7 +30,8 @@ This folder contains concise, step-by-step tutorials designed to help developers
 - Fetching Yahoo Finance ticker data using PyKX and creating embeddings with PyTorch on SENS data
 - Integrating time series analysis with TSS and nearest neighbor searches with HNSW 
 
-6️⃣ Fuzzy Filtering (coming soon!)
+6️⃣ Fuzzy Filtering
+- This tutorial walks through two examples of where it may be useful to introduce Fuzzy Filters, such as for queries or data that may contain typos, international spelling variations, or misspellings, and would normally result in no relevant search results, or incorrect data being retrieved.
 
 7️⃣ DTW Getting Started
 - Discover how to use Dynamic Time Warping on financial NYSE data to identify similar patterns in price movements, even when those patterns occur at different speeds or times.
