@@ -35,6 +35,10 @@ This folder contains concise, step-by-step tutorials designed to help developers
 
 7️⃣ DTW Getting Started
 - Discover how to use Dynamic Time Warping on financial NYSE data to identify similar patterns in price movements, even when those patterns occur at different speeds or times.
+
+8️⃣ BM25 & Hybrid Search
+- Explore how to combine traditional BM25 ranking with vector-based similarity for powerful hybrid search capabilities.
+- Learn how to blend both approaches for optimal retrieval performance using q and Python.
   
 ## 🤝 Got a question?
 Want to connect with other developers or get help? Join our Slack community https://kx.com/slack or ask a question on https://forum.kx.com
