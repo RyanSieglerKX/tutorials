@@ -10,7 +10,7 @@ git clone https://github.com/KxSystems/tutorials.git
 cd tutorials
 ```
 
-Make sure you have [KDB-X](https://kdb-x.kx.com/sign-in) installed.
+Make sure you have [KDB-X](https://developer.kx.com/products/kdb-x/install) installed.
 
 **Important!** Intel-based macOS is not supported at this time.
 
