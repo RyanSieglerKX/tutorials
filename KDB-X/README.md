@@ -17,7 +17,7 @@ Make sure you have [KDB-X](https://developer.kx.com/products/kdb-x/install) inst
 ## 📁 Structure 
 
 - **KDB-X/**
-  - `Modules/ai-libs/` – Integrate KDB-X with AI applications.
+  - `Modules/` – Integrate KDB-X with modules like kurl, REST, objstr, and AI applications.
   - `Python/` – Historical time series analysis in Python.
   - `q/` – Time series and event processing scripts in q.
 
