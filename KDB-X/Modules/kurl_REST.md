@@ -12,8 +12,7 @@ In this tutorial, we'll build a complete data pipeline:
 **What you'll learn:**
 - How to use KURL for HTTP requests (public and authenticated)
 - Working with GCP buckets using OAuth2 authentication
-- Creating RESTful APIs that expose kdb+ functions
-- Best practices for API design and testing
+- Creating RESTful APIs that expose KDB-X functions
 
 **See the docs:**
 - [kurl](https://docs.kx.com/latest/kdb-x/integrations/kurl.htm)
@@ -21,7 +20,7 @@ In this tutorial, we'll build a complete data pipeline:
 
 **Prerequisites:**
 - KDB-X installed - https://developer.kx.com/products/kdb-x/install
-- OHLC.csv file (stock market data) in your working directory
+- Download the [OHLC.csv file](https://github.com/KxSystems/tutorials/blob/main/KDB-X/Modules/ai-libs/src/OHLC.csv) (stock market data) to your working directory
 - GCP account with authentication configured and a cloud bucket created
 
 Let's begin! 🎯
@@ -103,6 +102,8 @@ export GCP_TOKEN=$(gcloud auth print-access-token)
 Let's upload our OHLC.csv file (stock market data) to a Google Cloud Storage bucket.
 
 **The data:** Daily OHLC (Open, High, Low, Close) prices for 8 stocks from January to July 2025.
+
+**Remember to update your GCS bucket name below!**
 
 ```q
 // Define bucket and object names
