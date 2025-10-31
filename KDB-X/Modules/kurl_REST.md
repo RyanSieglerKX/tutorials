@@ -5,7 +5,7 @@
 In this tutorial, we'll build a complete data pipeline:
 1. 🌐 Fetch data from public APIs using **KURL**
 2. ☁️ Upload market data to Google Cloud Storage
-3. 📥 Download and parse CSV data into kdb+ tables
+3. 📥 Download and parse CSV data into KDB-X tables
 4. 🚀 Expose analytics as REST APIs
 5. 🧪 Test our APIs with real requests
 
@@ -172,7 +172,7 @@ show "Created: ",metadata`timeCreated;
 
 ## Part 6: Downloading and Parsing Data
 
-Now for the magic moment - let's download our CSV and transform it into a kdb+ table!
+Now for the magic moment - let's download our CSV and transform it into a KDB-X table!
 
 ### 📥 Download from GCS
 
@@ -190,7 +190,7 @@ csvData:last resp;
 show "Size: ",string count csvData," characters";
 ```
 
-### 🔄 Parse CSV to KDB+ Table
+### 🔄 Parse CSV to KDB-X Table
 
 The CSV contains columns: date, sym, company, close, volume, open, high, low
 
@@ -493,7 +493,7 @@ Congratulations! You've built a complete data pipeline:
 1. ✅ Used KURL to fetch data from public APIs
 2. ✅ Authenticated with GCP using OAuth2
 3. ✅ Uploaded data to cloud storage
-4. ✅ Downloaded and parsed CSV into kdb+ tables
+4. ✅ Downloaded and parsed CSV into kdb-X tables
 5. ✅ Built a RESTful API exposing analytics
 6. ✅ Tested all endpoints with real requests
 
