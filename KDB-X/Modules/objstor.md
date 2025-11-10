@@ -122,7 +122,7 @@ cz:enlist[`]!enlist .z.zd
 d:2021.09.01+til 20
 ```
 ```q
-{[dt;n](sv[`;.Q.par[`:localdb/db/;dt;`trade],`];cz) set .Q.en[`:localdb/;([]sym:n?`AAPL`MSFT`GOOGL`AMZN`TSLA`META`NVDA`AMD;time:dt+09:30:00.000+asc n?06:30:00.000;price:100+n?100.0;size:100*1+n?100)]}[;10000]each d
+{[dt;n;cz](sv[`;.Q.par[`:localdb/db/;dt;`trade],`];cz) set .Q.en[`:localdb/;([]sym:n?`AAPL`MSFT`GOOGL`AMZN`TSLA`META`NVDA`AMD;time:dt+09:30:00.000+asc n?06:30:00.000;price:100+n?100.0;size:100*1+n?100)]}[;10000;cz]each d
 ```
 
 **What this does:**
