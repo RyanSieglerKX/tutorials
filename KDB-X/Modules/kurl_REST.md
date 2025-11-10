@@ -21,7 +21,9 @@ In this tutorial, we'll build a complete data pipeline:
 **Prerequisites:**
 - KDB-X installed - https://developer.kx.com/products/kdb-x/install
 - Download the [OHLC.csv file](https://github.com/KxSystems/tutorials/blob/main/KDB-X/Modules/ai-libs/src/OHLC.csv) (stock market data) to your working directory
-- GCP account with authentication configured and a cloud bucket created
+- [gcloud SDK CLI](https://docs.cloud.google.com/sdk/docs/install) installed with GCP account and authentication configured, and a cloud bucket created
+
+Note that this tutorial leverages GCP, but Kurl & REST are also compatible with AWS and Azure, see the docs for information on other cloud platforms.
 
 Let's begin! 🎯
 
@@ -196,6 +198,8 @@ The CSV contains columns: date, sym, company, close, volume, open, high, low
 
 We'll parse each column with the appropriate type.
 
+See docs on CSV parsing [here](https://code.kx.com/q/ref/file-text/#load-csv).
+
 ```q
 // Define column types:
 // D = Date, S = Symbol, S = Symbol, F = Float (x5), J = Long
@@ -278,7 +282,7 @@ These functions will process API requests and return data.
 .api.getLatestPrices:{[x]select date:last date, close:last close by sym from t};
 
 // Handler 4: Get statistics for a symbol
-.api.getStats:{[x]symbol:x[`arg;`sym];select minPrice:min close,maxPrice:max close,avgPrice:avg close, totalVolume:sum volume,tradeDays:count i by sym from t where sym=symbol};
+.api.getStats:{[x]symbol:x[`arg;`sym];select minPrice:min close,maxPrice:max close,avgPrice:avg close, totalVolume:sum volume,rowCount:count i by sym from t where sym=symbol};
 
 // Handler 5: Get historical price data
 .api.getPriceHistory:{[x]symbol:x[`arg;`sym];startDate:x[`arg;`startDate];endDate:x[`arg;`endDate]; select date, open, high, low, close, volume from t where sym=symbol, date within (startDate;endDate)};
