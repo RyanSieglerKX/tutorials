@@ -25,6 +25,8 @@ This tutorial demonstrates how to work with KDB-X's object storage module (`objs
 - Google Cloud SDK (`gcloud`) installed and authenticated
 - A GCS bucket created (we'll use variable `bucket` throughout)
 
+Note that this tutorial leverages GCP, but Kurl & REST are also compatible with AWS and Azure, see the docs for information on other cloud platforms.
+
 Let's begin! 
 
 ---
