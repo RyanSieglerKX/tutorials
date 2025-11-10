@@ -253,7 +253,7 @@ Now for the exciting part - let's expose our analytics as REST APIs!
 .rest:.com_kx_rest;  // Create convenient alias
 
 // Initialize framework with autoBind
-// autoBind:1b means REST will handle .z.ph and .z.pp
+// autoBind:1b means REST will handle .z.ph and .z.pp, q's native HTTP handlers for GET and POST
 .rest.init enlist[`autoBind]!enlist[1b];
 
 show "REST framework initialized!";
