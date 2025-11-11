@@ -3,7 +3,7 @@
 SQL provides a familiar relational interface for querying and managing data in KDB-X, allowing users to leverage standard SQL syntax within the q environment.
 This tutorial will walk through some examples of how to use SQL to interact with and manipulate q objects, and then show how to utilise the power of q functionality through SQL.
 
-*Note: SQL is currently offered as part of core but may be embedded as a module in the future.*
+*Note: SQL is currently supplied embedded in the q executable but may be be provided as a module in the future..*
 
 ## 1. Prerequisites
 
@@ -24,15 +24,17 @@ q)
 ```
 Load the dataset into a q table:
 ```q
+//Run the initialisation function so that you can use s) or .s.e straight away
+.s.init[]
 // The \z system command sets the format for date parsing 
 \z 1
 
 fvprices:("SSSDSF"; enlist ",") 0: `$":/src/wholesaleproduceprices.csv"
 ```
 In the above:
-- 0: is used to read the csv file
-- The schema " SSSDSF" specifies the datatypes for each column
-- The "," ensures the CSV is parsed using commas as delimiters.
+- `0:` is used to read the csv file
+- The schema `"SSSDSF"` specifies the datatypes for each column
+- The `","` ensures the CSV is parsed using commas as delimiters.
 
 Now the dataset has been loaded, we can inspect the table using first to see what the first row of the table looks like:
 ```q
@@ -61,7 +63,7 @@ There are a few different ways to query using SQL within a q session.
 
 The first option is to use `s)` and then standard SQL code. To return all rows of the table:
 ```SQL
-s) SELECT * FROM fvprices
+s)SELECT * FROM fvprices
 ```
 ```
 category  item                 variety                date       unit price
@@ -87,7 +89,7 @@ vegetable brussels_sprouts     brussels_sprouts       2025.10.13 kg   1
 
 However, you don’t have to capitalise key words like SELECT and FROM:
 ```SQL
-s) select * from fvprices where category = 'vegetable' 
+s)select * from fvprices where category = 'vegetable' 
 ```
 ```
 category  item                 variety                date       unit price
@@ -110,7 +112,7 @@ vegetable cabbage              round_green_other      2025.10.13 head 0.62
 Another way to query using SQL is to wrap your SQL code within quotation marks using `.s.e`:
 
 ```SQL
-.s.e "SELECT category, COUNT(item) AS count_per_category FROM fvprices GROUP BY category"
+.s.e"SELECT category, COUNT(item) AS count_per_category FROM fvprices GROUP BY category"
 ```
 ```
 category    count_per_category
@@ -123,7 +125,7 @@ vegetable   12673
 
 Common SQL aggregations and calculations are supported in KDB-X. For example, to find the avg price of each type of item:
 ```SQL
-.s.e "SELECT category,item,unit,avg(price) AS avg_price FROM fvprices GROUP BY category,item ORDER BY avg_price DESC"
+.s.e"SELECT category,item,unit,avg(price) AS avg_price FROM fvprices GROUP BY category,item ORDER BY avg_price DESC"
 ```
 ```
 category    item                 unit avg_price
@@ -149,7 +151,7 @@ You can define a function to return a table in SQL and then query the result of 
 ```q
 x:.s.e"SELECT item, variety, unit, avg(price) as avg_price FROM fvprices WHERE price>15.00 GROUP BY variety";
 
-.s.e "select item, avg_price from x";
+.s.e"select item, avg_price from x";
 ```
 ```
 item         avg_price
@@ -260,7 +262,7 @@ Sometimes, it may be easier to use a function that exists in the q language.
 In the code below, we are looking at an example of creating a pivot table – something that is relatively straightforward and simple to do in just a few lines of q code. 
 ```q
 pivotprices:{[]
-  //Remove the “.” from the column names (dates) because SQL does not like dots in column names
+  //Remove the "." from the column names (dates) because SQL does not like dots in column names
   pp:update date:`$"_" sv '"." vs' string[date] from select variety, price, date from fvprices; 
   //Pull out the date column into distinct values that will become individual columns in the pivot table
   D:asc exec distinct date from pp;
@@ -274,7 +276,7 @@ pivotprices[]
 ```
 We can then call that q function from within the SQL code
 ```SQL
-s) select * from qt('{pivotprices[]}[]')
+s)select * from qt('{pivotprices[]}[]')
 ```
 
 ## Key Takeaways
