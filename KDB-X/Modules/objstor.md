@@ -124,7 +124,7 @@ cz:enlist[`]!enlist .z.zd
 d:2021.09.01+til 20
 ```
 ```q
-{[dt;n;cz](sv[`;.Q.par[`:localdb/db/;dt;`trade],`];cz) set .Q.en[`:localdb/;([]sym:n?`AAPL`MSFT`GOOGL`AMZN`TSLA`META`NVDA`AMD;time:dt+09:30:00.000+asc n?06:30:00.000;price:100+n?100.0;size:100*1+n?100)]}[;10000;cz]each d
+{[dt;n;cz](sv[`;.Q.par[`:localdb/db/;dt;`trade],`];cz) set .Q.en[`:localdb/db;([]sym:n?`AAPL`MSFT`GOOGL`AMZN`TSLA`META`NVDA`AMD;time:dt+09:30:00.000+asc n?06:30:00.000;price:100+n?100.0;size:100*1+n?100)]}[;10000;cz]each d
 ```
 
 **What this does:**
@@ -150,20 +150,62 @@ zipLevel          | 6i
 **✅ Success!** The file is compressed. Notice `compressedLength` is about ~70% of `uncompressedLength`. We could adjust the parameters to get even more compression.
 
 ### Step 5: Load and Query Local Database
+**Load the database:**
 ```q
 \l localdb/db
 ```
+**What tables are in the db?**
 ```q
 tables[]
 ```
+Output: ``,`trade``
+
+**Find data types of each column:**
 ```q
 meta trade
 ```
+Output:
+```
+c    | t f a
+-----| -----
+date | d
+sym  | s
+time | p
+price| f
+size | j
+```
+**Query for the count trades per symbol on a given date:**
 ```q
 select count i by sym from trade where date=2021.09.01
 ```
+Output:
+```
+sym  | x
+-----| ----
+AAPL | 1217
+AMD  | 1272
+AMZN | 1265
+GOOGL| 1224
+META | 1306
+MSFT | 1210
+NVDA | 1297
+TSLA | 1209
+```
+
+**Query to find number of trades per date:** 
 ```q
 select count i by date from trade
+```
+Output:
+```
+date      | x
+----------| -----
+2021.09.01| 10000
+2021.09.02| 10000
+2021.09.03| 10000
+2021.09.04| 10000
+2021.09.05| 10000
+...
 ```
 
 **🎯 Your local compressed database is ready for cloud upload!**
@@ -206,7 +248,7 @@ Should show all date partitions: `2021.09.01/` through `2021.09.20/`
 
 Time to access your private cloud data from KDB-X!
 
-### Step 1: Create Cloud Database Structure
+### Step 1: Create Cloud Database Structure Locally
 ```bash
 mkdir clouddb_hdb
 gsutil cp gs://$BUCKET/sym clouddb_hdb/
@@ -232,21 +274,22 @@ q
 ### Step 3: Verify Cloud Access
 
 Before loading the database, let's verify we can access the bucket:
+
+To list date partitions use `key`:
 ```q
 key`$":gs://",getenv[`BUCKET],"/db"
 ```
 
-Expected: List of date partitions
+To list files in a folder: (Returns `` `s#`.d`price`size`sym`time``)
 ```q
 key`$":gs://",getenv[`BUCKET],"/db/2021.09.01/trade/"
 ```
 
-Expected: `` `s#`.d`price`size`sym`time``
+To get the columns (in order) of a table: (Returns: `` `sym`time`price`size``)
 ```q
 get`$":gs://",getenv[`BUCKET],"/db/2021.09.01/trade/.d"
 ```
 
-Expected: `` `sym`time`price`size``
 
 ### Step 4: Check File Properties
 ```q

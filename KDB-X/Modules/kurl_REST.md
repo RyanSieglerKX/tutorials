@@ -57,6 +57,14 @@ censusData:.j.k last censusResp;
 show "First 5 states with population data:";
 show 5#censusData;
 ```
+Output:
+```
+"NAME"          "P1_001N"  "state"
+"Pennsylvania"  "13002700" "42"
+"California"    "39538223" "06"
+"West Virginia" "1793716"  "54"
+"Utah"          "3271616"  "49"
+```
 
 ### 💡 What Just Happened?
 
@@ -189,8 +197,9 @@ if[200<>first resp; 'last resp];
 // Extract CSV content from response
 csvData:last resp;
 
-show "Size: ",string count csvData," characters";
+show "Size: ",string count csvData;
 ```
+Output: `Size: 73286`
 
 ### 🔄 Parse CSV to KDB-X Table
 
@@ -213,7 +222,16 @@ show "";
 show "First 5 rows:";
 show 5#t;
 ```
-
+Output:
+```
+date       sym   company                          close  volume  open   high     low      x
+-------------------------------------------------------------------------------------------
+2025.04.01 ADD   Color Star Technology Co Ltd     0.7249 392109  0.6733 0.73     0.635
+2025.04.01 AXON  Axon Enterprise Inc              541.2  509615  521.59 542.9849 520.19
+2025.04.01 CEG   Constellation Energy Corporation 206.94 2863111 200.95 207.76   198.09
+2025.04.01 HON   Honeywell International Inc      213.45 2563812 211.11 213.63   209.6804
+2025.04.01 HSHIP Himalaya Shipping Ltd            5.45   104627  5.48   5.52     5.4
+```
 ---
 
 ## Part 7: Data Exploration
@@ -231,6 +249,20 @@ show "";
 show "Latest prices:";
 show select last close by sym from t;
 ```
+Output:
+```
+sym  | close
+-----| ------
+ADD  | 0.7401
+AXON | 755.49
+CEG  | 347.84
+HON  | 222.35
+HSHIP| 5.98
+HSHP | 6.82
+STLD | 127.56
+TT   | 438.08
+WPM  | 91.51
+```
 
 ### 📈 Analytics Query
 
@@ -242,7 +274,20 @@ stats:select avgClose:avg close,maxClose:max close,minClose:min close,totalVol:s
 
 show stats;
 ```
-
+Output:
+```
+sym  | avgClose  maxClose minClose totalVol
+-----| ----------------------------------------
+ADD  | 0.9021331 1.27     0.575    8.740337e+07
+AXON | 668.3614  870.97   496.65   9.179103e+07
+CEG  | 273.1469  354.89   170.96   4.322696e+08
+HON  | 217.1408  240.4    182.86   5.084363e+08
+HSHIP| 5.395325  6.08     4.44     1.211286e+07
+HSHP | 6.591489  7.29     5.77     7627995
+STLD | 128.3708  139.06   109.21   1.968902e+08
+TT   | 393.4819  472.54   315.21   1.826163e+08
+WPM  | 82.88153  100.69   67.5     2.414226e+08
+```
 ---
 
 ## Part 8: Building a REST API Server
@@ -403,6 +448,20 @@ symbols:.j.k last resp;
 show "Available symbols:";
 show symbols;
 ```
+Expected output:
+```
+sym
+-------
+"ADD"
+"AXON"
+"CEG"
+"HON"
+"HSHIP"
+"STLD"
+"TT"
+"WPM"
+"HSHP"
+```
 
 ### Test 3: Get Latest Prices 💰
 
@@ -410,7 +469,21 @@ show symbols;
 show "Getting latest prices for all symbols...";
 resp:.kurl.sync("http://localhost:8080/latest"; `GET; ::);
 
-if[200=first resp;latest:.j.k last resp;show latest;];
+if[200=first resp; show latest:.j.k last resp];
+```
+Expected output:
+```
+sym     date         close
+---------------------------
+"ADD"   "2025-07-31" 0.7401
+"AXON"  "2025-07-31" 755.49
+"CEG"   "2025-07-31" 347.84
+"HON"   "2025-07-31" 222.35
+"HSHIP" "2025-05-30" 5.98
+"HSHP"  "2025-07-31" 6.82
+"STLD"  "2025-07-31" 127.56
+"TT"    "2025-07-31" 438.08
+"WPM"   "2025-07-31" 91.51
 ```
 
 ### Test 4: Get Price for Specific Symbol 🎯
@@ -419,17 +492,14 @@ if[200=first resp;latest:.j.k last resp;show latest;];
 show "Getting latest price for AXON...";
 resp:.kurl.sync("http://localhost:8080/price?sym=AXON"; `GET; ::);
 
-if[200=first resp;price:.j.k last resp;show price;];
+if[200=first resp; show stats:.j.k last resp];
 ```
 
 Expected output:
-```json
-[{
-  "sym": "AXON",
-  "date": "2025.07.31",
-  "close": 755.49,
-  "volume": 513614
-}]
+```
+sym    date         close  volume
+---------------------------------
+"AXON" "2025-07-31" 755.49 513614
 ```
 
 ### Test 5: Get Statistics 📊
@@ -439,6 +509,12 @@ show "Getting statistics for AXON...";
 resp:.kurl.sync("http://localhost:8080/stats?sym=AXON"; `GET; ::);
 
 if[200=first resp;stats:.j.k last resp;show stats;];
+```
+Expected output:
+```
+sym    minPrice maxPrice avgPrice totalVolume  rowCount
+-------------------------------------------------------
+"AXON" 496.65   870.97   668.3614 9.179103e+07 124
 ```
 
 ### Test 6: Get Historical Data 📈
@@ -450,7 +526,16 @@ resp:.kurl.sync(url; `GET; ::);
 
 if[200=first resp;history:.j.k last resp;show "First 5 records:";show 5#history;];
 ```
-
+Expected output:
+```
+date         open   high   low      close  volume
+--------------------------------------------------
+"2025-03-03" 532.84 541.75 520.6701 525.75 876097
+"2025-03-04" 513.87 543.41 503.02   528.28 956405
+"2025-03-05" 529.75 538.98 521.08   534.96 945209
+"2025-03-06" 522.85 526.19 495      499.31 912281
+"2025-03-07" 500    527.94 500      526.4  1277984
+```
 ---
 
 ## Part 13: Testing with curl
