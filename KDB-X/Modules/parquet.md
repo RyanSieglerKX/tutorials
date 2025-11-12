@@ -34,7 +34,9 @@ First, let's find the data we just downloaded from Kaggle
 ```q
 system "find parquet/AUDUSD | head" 
 
-system "find parquet/AUDUSD | wc -l" 
+system "find parquet/AUDUSD | wc -l"
+```
+```
 "253"
 ```
 We can see that there are over 250 files in this dataset. 
@@ -53,14 +55,16 @@ quote: pq `$":parquet/AUDUSD/AUDUSD - 2004-04-01 - 2004-04-30.parquet"
 Straight away, we can run some basic functions and aggregations on this table using q:
 ```q
 select rows:count i from quote 
-
+```
+```
 rows 
 ------- 
 2213548 
 ```
 ```q
 meta quote 
-
+```
+```
 c         | t f a 
 ----------| ----- 
 timestamp | p 
@@ -75,7 +79,8 @@ As you can see from above, we can treat this table just like a q table, and run 
 We can also query using common q functionality like `xbar` and the parquet column names: 
 ```q
 10#select spread:max ask_price-bid_price by 0D01 xbar timestamp from quote where ask_price>=bid_price, not null ask_volume 
-
+```
+```
 timestamp                    | spread
 -----------------------------| -------
 2004.04.01D00:00:00.000000000| 0.0006
@@ -101,11 +106,14 @@ Let's have a look at the file structure and then extract the file names as a col
 path:`:parquet/AUDUSD;
 files:([]file:` sv'path,/:key path);
 count files
+```
+```
 252
 ```
 ```q
 10#files
- 
+```
+``` 
 file 
 -------------------------------------------------------- 
 :parquet/AUDUSD/AUDUSD - 2004-01-01 - 2004-01-31.parquet 
@@ -123,9 +131,10 @@ file
 Creating the columns that will act as our virtual columns, using the filename and the month:
 
 ```q
-part:(update month:2004.01m+til count files from files) 
-
-10#part 
+part:update month:2004.01m+til count files from files;
+10#part
+```
+```
 file                                                     month 
 ---------------------------------------------------------------- 
 :parquet/AUDUSD/AUDUSD - 2004-01-01 - 2004-01-31.parquet 2004.01 
@@ -142,9 +151,10 @@ file                                                     month
 
 Now that we have our virtual columns, we can create one virtual table in memory pulling Parquet data from each file
 ```q
-quote_all:tb.mkP part!virt 
-
-meta quote_all 
+quote_all:tb.mkP part!virt; 
+meta quote_all
+```
+```
 c         | t f a 
 ----------| ----- 
 file      | s 
@@ -160,6 +170,8 @@ bid_volume| i
 The table in memory now contains all the data from each file in the dataset:
 ```q
 select rows:count i from quote_all 
+```
+```
 rows 
 --------- 
 353889010 
@@ -168,7 +180,8 @@ rows
 We can now start to query this data just like we would query a `q` table:
 ```q
 select rows:count i by file from quote_all 
-
+```
+```
 file                                                    | rows 
 --------------------------------------------------------| ------- 
 :parquet/AUDUSD/AUDUSD - 2004-01-01 - 2004-01-31.parquet| 2027152 
@@ -212,7 +225,8 @@ calc:{[st;et;bkt]
 We can use `\ts` to see the power of using KDB-X to perform fast anaylytics at scale: 
 ```q
 \ts calc[2004.01m;2006.01m;0D01]
-
+```
+```
 7541 3489661664
 ```
 ## Key Takeaways
