@@ -223,7 +223,7 @@ calc:{[st;et;bkt]
          by bkt xbar timestamp, symbol from tmp 
 };
 ```
-We can use `\ts` to see the power of using KDB-X to perform fast anaylytics at scale: 
+We can use `\ts` to see the power of using KDB-X to perform fast analytics at scale: 
 ```q
 \ts calc[2004.01m;2006.01m;0D01]
 ```
