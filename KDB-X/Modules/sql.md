@@ -278,7 +278,15 @@ We can then call that q function from within the SQL code
 ```SQL
 s)select * from qt('{pivotprices[]}[]')
 ```
-
+```
+variety                category  item                 unit 2017_11_03 2017_11_10 2017_11_17 2017_11_24 2017_12_01 2017_12_08 2017_12_15 2017_12_22 2018_01_12 2018_01_19 2018_01_26 2018_..
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------..
+bramleys_seedling      fruit     apples               kg   0.73       0.78       0.73       0.74       0.78       0.77       0.72       0.75       0.79       0.83       0.78       0.79 ..
+coxs_orange_group      fruit     apples               kg   0.75       0.72       0.75       0.71       0.75       0.71       0.77       0.78       0.82       0.78       0.76       0.77 ..
+egremont_russet        fruit     apples               kg   0.82       0.78       0.82       0.84       0.86       0.84       0.87       0.86       1          1          0.88       0.83 ..
+braeburn               fruit     apples               kg   0.64       0.61       0.69       0.7        0.72       0.71       0.7        0.71       0.78       0.77       0.7        0.75 ..
+gala                   fruit     apples               kg   0.79       0.68       0.72       0.77       0.8        0.81       0.8        0.78       0.79       0.8        0.78       0.74 ..
+```
 ## Key Takeaways
 
 - Familiar Interface – SQL syntax can be used directly in KDB-X, lowering the barrier to entry for users coming from traditional database systems.
