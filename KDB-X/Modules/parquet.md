@@ -43,7 +43,7 @@ Ready to go beyond the Community Edition? Email preview@kx.com
 q)
 ```
 
-Adn we can load the Parquet module:
+And we can load the Parquet module:
 ```q
 ([pq]):use`kx.pq
 ```
