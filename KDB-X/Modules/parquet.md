@@ -22,7 +22,19 @@ curl -L -o ~/parquet/forex-tick-data.zip https://www.kaggle.com/api/v1/datasets/
 
 unzip parquet/forex-tick-data.zip 
 ```
-Then launch a q sessions by running `q`
+
+Now let's find the data we just downloaded from Kaggle:
+
+```
+find parquet/AUDUSD | head
+find parquet/AUDUSD | wc -l
+```
+```
+"253"
+```
+We can see that there are over 250 files in this dataset. 
+
+Now launch a q sessions by running `q`:
 ```q
 Welcome to KDB-X Community Edition! 
 For Community support, please visit https://kx.com/slack 
@@ -30,25 +42,15 @@ Tutorials can be found at https://github.com/KxSystems/tutorials
 Ready to go beyond the Community Edition? Email preview@kx.com 
 q)
 ```
-First, let's find the data we just downloaded from Kaggle
-```q
-system "find parquet/AUDUSD | head" 
 
-system "find parquet/AUDUSD | wc -l"
-```
-```
-"253"
-```
-We can see that there are over 250 files in this dataset. 
-
-Now, we will load the Parquet module
+Adn we can load the Parquet module:
 ```q
 ([pq]):use`kx.pq
 ```
 
 ### Single Table Example
 
-Let's load in one of the tables, so that we can see what we're working with
+Let's load in one of the tables, so that we can see what we're working with:
 ```q
 quote: pq `$":parquet/AUDUSD/AUDUSD - 2004-04-01 - 2004-04-30.parquet"
 ```
@@ -78,7 +80,7 @@ As you can see from above, we can treat this table just like a q table, and run 
 
 We can also query using common q functionality like `xbar` and the parquet column names: 
 ```q
-10#select spread:max ask_price-bid_price by 0D01 xbar timestamp from quote where ask_price>=bid_price, not null ask_volume 
+10 sublist select spread:max ask_price-bid_price by 0D01 xbar timestamp from quote where ask_price>=bid_price, not null ask_volume 
 ```
 ```
 timestamp                    | spread
@@ -111,7 +113,7 @@ count files
 252
 ```
 ```q
-10#files
+10 sublist files
 ```
 ``` 
 file 
@@ -133,7 +135,7 @@ Creating the columns that will act as our virtual columns, using the filename an
 ```q
 virt:pq each files`file;
 part:update month:2004.01m+til count files from files;
-10#part
+10 sublist part
 ```
 ```
 file                                                     month 
