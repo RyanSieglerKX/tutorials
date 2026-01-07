@@ -152,7 +152,7 @@ file                                                     month
 :parquet/AUDUSD/AUDUSD - 2004-10-01 - 2004-10-31.parquet 2004.10 
 ```
 
-Now that we have our virtual columns, we can create one virtual table in memory pulling Parquet data from each file
+Now that we have our virtual columns, we can create one virtual table in memory pulling Parquet data from each file:
 ```q
 quote_all:tb.mkP part!virt; 
 meta quote_all
